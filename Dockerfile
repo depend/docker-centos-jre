@@ -6,4 +6,4 @@ WORKDIR /tmp
 COPY install.sh install.sh
 
 RUN chmod a+x install.sh && \
-    /bin/bash ./install.sh -v 8u112
+    /bin/bash ./install.sh -v 8u121
