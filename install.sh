@@ -179,9 +179,10 @@ set_url() {
     local version_arg=${2}
     local build_arg=${3}
     local filename_arg="${4}"
+    local token_arg="${5}"
 
     if [[ "${base_arg}" == *"download.oracle.com"* ]]; then
-        set_oracle_url "${base_arg}" "${version_arg}" "${build_arg}" "${filename_arg}"
+        set_oracle_url "${base_arg}" "${version_arg}" "${build_arg}" "${filename_arg}" "${token_arg}"
     else
         set_custom_url "${base_arg}" "${filename_arg}"
     fi
@@ -198,9 +199,14 @@ set_oracle_url() {
     local version_arg=${2}
     local build_arg=${3}
     local filename_arg="${4}"
+    local token_arg="${5}"
 
     if [ -n "${build_arg}" ]; then
-        URL=$(printf "%s/%s-b%02d/%s" "${base_arg}" "${version_arg}" "${build_arg}" "${filename_arg}")
+        if [ -n "${token_arg}" ]; then
+            URL=$(printf "%s/%s-b%02d/%s/%s" "${base_arg}" "${version_arg}" "${build_arg}" "${token_arg}" "${filename_arg}")
+        else
+            URL=$(printf "%s/%s-b%02d/%s" "${base_arg}" "${version_arg}" "${build_arg}" "${filename_arg}")
+        fi
     else
         URL=$(printf "%s/%s/%s" "${base_arg}" "${version_arg}" "${filename_arg}")
     fi
@@ -249,6 +255,7 @@ set_package_info() {
     local version_arg="${1,,}"
     local type_arg="${2,,}"
     local url_arg="${3,,}"
+    local token_arg="${4,,}"
 
     if [ -z "${version_arg}" ]; then
         version_arg="${DEFAULT_VERSION}"
@@ -269,7 +276,7 @@ set_package_info() {
     set_display_name "${TYPE}" "${MAJOR_VERSION}" "${MINOR_VERSION}"
     set_install_directory "${BASE_INSTALL_DIR}" "${TYPE}" "${VERSION}"
     set_filename "${TYPE}" "${version_arg}" "${OS}" "${ARCH}"
-    set_url "${url_arg}" "${version_arg}" "${BUILD}" "${FILENAME}"
+    set_url "${url_arg}" "${version_arg}" "${BUILD}" "${FILENAME}" "${token_arg}"
 }
 
 
@@ -412,8 +419,9 @@ parse_args() {
     local java_type
     local base_url
     local version_found=-1
+    local url_token
 
-    while getopts ":h?v:t:s:" option; do
+    while getopts ":h?v:t:s:k:" option; do
         case "${option}" in
             s)
                 base_url="${OPTARG}"
@@ -432,12 +440,15 @@ parse_args() {
             h|\?) 
                 show_help
                 ;;
+            k)
+                url_token="${OPTARG}"
+                ;;
         esac
     done
 
     shift $((OPTIND -1))
 
-    set_package_info "${version}" "${java_type}" "${base_url}"
+    set_package_info "${version}" "${java_type}" "${base_url}" "${url_token}"
 }
 
 
