@@ -53,6 +53,7 @@ PACKAGES=(
     [8u112]=15
     [8u121]=13
     [8u131]=11
+    [8u141]=15
 )
 
 # Package metadata. This controls which Java package is installed.
