@@ -10,4 +10,5 @@ RUN yum install -y epel-release && \
     pip3 --no-cache-dir install pandas && \
     pip3 --no-cache-dir install requests && \
     pip3 --no-cache-dir install cassandra-driver && \
+    pip3 --no-cache-dir install paramiko && \
     yum clean all
